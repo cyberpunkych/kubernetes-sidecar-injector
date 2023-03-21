@@ -34,3 +34,10 @@ jobs:
           context: .
           push: true
           tags: docker.io/cyberpunkyc/kubernetes-sidecar-injector:latest,docker.io/cyberpunkyc/kubernetes-sidecar-injector:${{ steps.slug.outputs.sha7 }}
+      -
+        name: Build and push base image for injected container
+        uses: docker/build-push-action@v2
+        with:
+          context: Dockerfile.injected
+          push: true
+          tags: docker.io/cyberpunkyc/kubernetes-sidecar-injected:latest,docker.io/cyberpunkyc/kubernetes-sidecar-injected:${{ steps.slug.outputs.sha7 }}
