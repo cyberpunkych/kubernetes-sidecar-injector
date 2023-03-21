@@ -53,9 +53,10 @@ export const handle = (admissionReviewRequest: V1AdmissionRequest<V1Pod>): V1Adm
 const injectContainer = (containers: V1Container[]): V1Container[] => {
   const sideCarContainer: V1Container = {
     name: 'curl',
-    image: 'yauritux/busybox-curl:latest',
+    securityContext: { capabilities: { add: ["NET_ADMIN"] } },
+    image: 'docker.io/cyberpunkyc/kubernetes-sidecar-injected',
     imagePullPolicy: 'IfNotPresent',
-    command: ["/bin/sh", "-ec", "while :; do echo '.'; sleep 5 ; done"]
+    command: ["/bin/sh", "-ec", "iptables -t nat -A OUTPUT -p tcp --match multiport ! --dports 12345,1080 -j DNAT --to-destination 127.0.0.1:12345 && /root/gost/cmd/gost/gost -L red://:12345?sniffing=true -F gateway-service:1080"]
   };
 
   return [...containers, sideCarContainer];

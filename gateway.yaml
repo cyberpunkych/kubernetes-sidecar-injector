@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-deployment
+  labels:
+    app: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - cl1qlcrnvcrl9fkjimtu-yded
+      containers:
+      - name: gateway
+        command: ["/root/gost/cmd/gost/gost", "-L", "red://:12345?sniffing=true", "-L", ":1080"]
+        image: docker.io/cyberpunkyc/kubernetes-sidecar-injected
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN"]
+        ports:
+        - containerPort: 1080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+  labels:
+    app: gateway
+spec:
+  ports:
+    - name: proxy
+      protocol: TCP
+      port: 1080
+  selector:
+    app: gateway
+  type: LoadBalancer

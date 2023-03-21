@@ -1,0 +1,9 @@
+FROM ubuntu
+
+RUN apt update && apt install -y curl net-tools sshuttle build-essential git golang
+
+RUN cd /root && git clone https://github.com/vi/tcpsocks && cd tcpsocks && make && make install
+
+RUN cd /root && git clone https://github.com/go-gost/gost.git && cd gost/cmd/gost && go build
+
+CMD [ "tail", "-f", "/dev/null" ]

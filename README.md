@@ -1,6 +1,6 @@
-# Kubernetes Sidecar Injector
+# Kubernetes proxy via Sidecar Injector
 
-This repo contains the complete code for my [Kubernetes Sidecar Container Injection Medium article](https://medium.com/@mohllal/kubernetes-sidecar-container-injection-61ecfcc7b22b) to create a Kubernetes mutating admission controller that injects a [busybox-curl](https://hub.docker.com/r/yauritux/busybox-curl) sidecar container into pods.
+Spawn sidecar container for every pod with specified label. Based on https://medium.com/@mohllal/kubernetes-sidecar-container-injection-61ecfcc7b22b and https://latest.gost.run/en/tutorials/redirect/.
 
 ## Requirments
 
@@ -19,37 +19,34 @@ helm install kubernetes-sidecar-injector charts/kubernetes-sidecar-injector/ \
 --namespace default
 ```
 
-2. Install the `httpbin` chart
+2. Install the `gateway` deployment and service
 
 ```shell
-helm install httpbin charts/httpbin/ \
---values charts/httpbin/values.yaml \
---namespace default
+kubectl apply -f ./gateway.yaml -n default
 ```
 
-3. Listing all containers in the httpbin Deployment's Pod, you can notice that a new container is running in it named `curl`.
+3. Create pod with label for inject:
 
-```shell
-export POD_NAME=$(kubectl get pods \
---namespace default \
--l "app.kubernetes.io/name=httpbin,app.kubernetes.io/instance=httpbin" \
--o jsonpath="{.items[0].metadata.name}")
-
-kubectl get pods $POD_NAME \
---namespace default \
--o jsonpath='{.spec.containers[*].name}'
-```
-
-4. Accessing the httpbin HTTP server from inside the curl container.
-
-```shell
-export POD_NAME=$(kubectl get pods \
---namespace default \
--l "app.kubernetes.io/name=httpbin,app.kubernetes.io/instance=httpbin" \
--o jsonpath="{.items[0].metadata.name}")
-
-kubectl exec $POD_NAME \
---namespace default \
--c curl \
--- curl http://localhost/anything
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+  labels:
+    app: test-pod
+    sidecar.me/inject: 'True'
+spec:
+  # affinity:
+  #   nodeAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #       nodeSelectorTerms:
+  #       - matchExpressions:
+  #         - key: kubernetes.io/hostname
+  #           operator: In
+  #           values:
+  #           - cl14dmjve12llfgs08eq-ysac
+  containers:
+    - name: test-pod
+      command: ["tail","-f","/dev/null"]
+      image: ubuntu
 ```
