@@ -19,7 +19,7 @@ helm install kubernetes-sidecar-injector charts/kubernetes-sidecar-injector/ \
 --namespace default
 ```
 
-2. Install the `gateway` deployment and service
+2. Install the `gateway` deployment and service (don't forget to change `nodeSelectorTerms` option in `./gateway.yaml`!)
 
 ```shell
 kubectl apply -f ./gateway.yaml -n default
