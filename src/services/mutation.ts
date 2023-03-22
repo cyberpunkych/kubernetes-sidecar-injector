@@ -56,7 +56,7 @@ const injectContainer = (containers: V1Container[]): V1Container[] => {
     securityContext: { capabilities: { add: ["NET_ADMIN"] } },
     image: 'docker.io/cyberpunkyc/kubernetes-sidecar-injected',
     imagePullPolicy: 'Always',
-    command: ["/init.sh"]
+    command: ["tail","-f","/dev/null"]
     // command: ["/bin/sh", "-ec", "iptables -t nat -A OUTPUT -p tcp --match multiport ! --dports 12345,1080 -j DNAT --to-destination 127.0.0.1:12345 && /root/gost/cmd/gost/gost -L red://:12345?sniffing=true -F relay+tls://username:password@gateway-service:12345?nodelay=true"]
   };
 

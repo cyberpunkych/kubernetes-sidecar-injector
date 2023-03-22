@@ -1,3 +1,5 @@
+#!/bin/bash
+
 tail -f /dev/null
 
 ip rule add fwmark 1 lookup 100
