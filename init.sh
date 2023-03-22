@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tail -f /dev/null
+# tail -f /dev/null
 
 ip rule add fwmark 1 lookup 100
 ip route add local 0.0.0.0/0 dev lo table 100
@@ -25,4 +25,4 @@ iptables -t mangle -A GOST_LOCAL -p tcp -m mark --mark 100 -j RETURN
 iptables -t mangle -A GOST_LOCAL -p tcp -j MARK --set-mark 1
 iptables -t mangle -A OUTPUT -p tcp -j GOST_LOCAL
 
-gost -L "red://:12345?sniffing=true&tproxy=true" -F "red://gateway-service:1080?sniffing=true&tproxy=true&so_mark=100"
+/root/gost/cmd/gost/gost -L "red://:12345?sniffing=true&tproxy=true" -F "http://gateway-service:1080?so_mark=100"

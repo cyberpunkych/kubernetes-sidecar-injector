@@ -25,7 +25,7 @@ spec:
                 - cl1qlcrnvcrl9fkjimtu-yded
       containers:
       - name: gateway
-        command: ["/root/gost/cmd/gost/gost", "-L", "red://:1080?sniffing=true&tproxy=true&so_mark=100"]
+        command: ["/root/gost/cmd/gost/gost", "-L", "http://192.168.1.1:1080?so_mark=100"]
         image: docker.io/cyberpunkyc/kubernetes-sidecar-injected
         securityContext:
           capabilities:
