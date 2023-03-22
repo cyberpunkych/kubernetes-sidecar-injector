@@ -1,6 +1,6 @@
 FROM ubuntu
 
-RUN apt update && apt install -y curl net-tools sshuttle build-essential git golang
+RUN apt update && apt install -y curl net-tools sshuttle build-essential git golang iproute2
 
 RUN cd /root && git clone https://github.com/vi/tcpsocks && cd tcpsocks && make && make install
 
