@@ -6,4 +6,8 @@ RUN cd /root && git clone https://github.com/vi/tcpsocks && cd tcpsocks && make 
 
 RUN cd /root && git clone https://github.com/go-gost/gost.git && cd gost/cmd/gost && go build
 
-CMD [ "tail", "-f", "/dev/null" ]
+COPY init.sh /init.sh
+
+RUN chmod +x /init.sh
+
+CMD [ "/init.sh" ]
